@@ -152,7 +152,7 @@ export default function TelaBatePapo() {
                                                 checked={item?.lida ? true : false}
                                                 className="me-2"
                                                 onChange={manipularMensagem}
-                                                value={item.lida}
+                                                value={item?.lida}
                                             />
                                             {
                                                 user.logado && item?.usuario.id === user.id && (
