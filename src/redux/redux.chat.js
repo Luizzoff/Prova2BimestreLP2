@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { consultar, deletar, gravar, atualizar } from "../service/service.chat";
+import { consultar, deletar, gravar } from "../service/service.chat";
 import ESTADO from "./redux.estado";
 
 export const consultarChats = createAsyncThunk('consultarChats', async () => {
