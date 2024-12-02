@@ -22,6 +22,17 @@ export async function deletar(chat) {
     return await res.json();
 }
 
+export async function atualizar(chat) {
+    console.log(chat);
+    const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(chat)
+    });
+    return await res.json();
+}
 
 export async function consultar(termo) {
     if (!termo)

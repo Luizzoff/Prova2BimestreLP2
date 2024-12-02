@@ -3,7 +3,7 @@ import { Form, Button, ListGroup, Image } from 'react-bootstrap';
 import Pagina from "../layouts/Pagina"
 import { useDispatch, useSelector } from 'react-redux';
 import ESTADO from '../../redux/redux.estado';
-import { consultarChats, deletarChat, gravarChat, zerarMensagem } from '../../redux/redux.chat';
+import { atualizarChat, consultarChats, deletarChat, gravarChat, zerarMensagem } from '../../redux/redux.chat';
 import { parse, differenceInMinutes } from 'date-fns';
 import { ContextoUsuario } from '../../App';
 import TelaLogin from '../tela/TelaLogin'
@@ -53,19 +53,21 @@ export default function TelaBatePapo() {
             console.log(dataInformada);
 
             const diferenca = differenceInMinutes(dataAtual, dataInformada);
-            return diferenca < 10;
+            return diferenca < 5;
         }
         return false;
     }
 
     function manipularSubmissao(evento) {
         const form = evento.currentTarget;
-        if (form.checkValidity()) {
+        if (form.checkValidity() && recado.mensagem) {
             setFormValidado(false);
             dispatch(gravarChat(recado));
         }
-        else
+        else {
             setFormValidado(true);
+            window.alert("Mensagem Vazia!");
+        }
         evento.preventDefault();
         evento.stopPropagation();
     }
@@ -81,6 +83,21 @@ export default function TelaBatePapo() {
             }
         });
         console.log(recado);
+    }
+
+    function manipularMensagem(evento){
+        const id = evento.target.id;
+        let lida = evento.target.value;
+        lida = (Boolean)(lida);
+        console.log(id, lida);
+        if(lida)
+            lida = false;
+        else
+            lida = true;
+        const chat = {
+            id, lida
+        }
+        dispatch(atualizarChat(chat));
     }
 
     return (
@@ -127,15 +144,26 @@ export default function TelaBatePapo() {
                                             <strong>{item?.usuario.nickname}</strong>: {item?.mensagem} <br />
                                             <small>postado em: {item?.dataHora}</small>
                                         </div>
-                                        {
-                                            user.logado && item?.usuario.id === user.id && (
-                                                calcularTempo(item?.dataHora) && (
-                                                    <Button onClick={() => { deletar(item) }} variant="danger" type="button" className="ms-auto">
-                                                        Excluir
-                                                    </Button>
+                                        <div className="d-flex align-items-center ms-auto">
+                                            <Form.Check
+                                                type="checkbox"
+                                                id={item?.id}
+                                                label={item?.lida ? "Lida" : "Não Lida"}
+                                                checked={item?.lida ? true : false}
+                                                className="me-2"
+                                                onChange={manipularMensagem}
+                                                value={item.lida}
+                                            />
+                                            {
+                                                user.logado && item?.usuario.id === user.id && (
+                                                    calcularTempo(item?.dataHora) && (
+                                                        <Button onClick={() => { deletar(item) }} variant="danger" type="button">
+                                                            Excluir
+                                                        </Button>
+                                                    )
                                                 )
-                                            )
-                                        }
+                                            }
+                                        </div>
                                     </ListGroup.Item>
                                 ))}
                             </ListGroup>
